@@ -34,6 +34,218 @@
   font-weight: 600;
 }
 
+.optimizeBtn {
+  background: linear-gradient(135deg, #450043 0%, #680065 100%);
+  color: #fff;
+  padding: 0.6rem 1.2rem;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(69, 0, 67, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.optimizeBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(69, 0, 67, 0.4);
+  background: linear-gradient(135deg, #5a0058 0%, #80007c 100%);
+}
+
+.optimizeBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.optimizeBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background: #666;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* Glassmorphic Modal Styles */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modalContent {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24px;
+  width: 90%;
+  max-width: 520px;
+  padding: 2rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  transform: translateY(0);
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 1rem;
+}
+
+.modalTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: #450043;
+  margin: 0;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.closeBtn:hover {
+  color: #333;
+}
+
+.optimizationSummary {
+  background: #f8f6f8;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #9a5c97;
+}
+
+.optimizationSummary p {
+  margin: 0;
+  color: #555;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.optimizationsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.optimizationCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #fff;
+  border: 1.5px solid #eaeaea;
+  border-radius: 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.optimizationCard:hover {
+  border-color: #9a5c97;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.optimizationInfo {
+  flex: 1;
+  padding-right: 1rem;
+}
+
+.optimizationTitle {
+  font-weight: 600;
+  font-size: 15px;
+  color: #333;
+  margin: 0 0 0.25rem 0;
+}
+
+.optimizationDesc {
+  font-size: 12px;
+  color: #777;
+  margin: 0 0 0.5rem 0;
+}
+
+.savingsAmount {
+  font-size: 13px;
+  font-weight: 700;
+  color: #10b981;
+  background: #ecfdf5;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.applyBtn {
+  background: #450043;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 15px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.applyBtn:hover {
+  background: #680065;
+  transform: scale(1.03);
+}
+
+.appliedBadge {
+  background: #d1fae5;
+  color: #065f46;
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+
 .gridContainer {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));

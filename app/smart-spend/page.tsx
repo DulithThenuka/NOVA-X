@@ -44,6 +44,12 @@ export default function SmartSpendPage() {
   const [amount, setAmount] = useState('')
   const [category, setCategory] = useState('Food')
 
+  // Optimization states
+  const [isOptimizing, setIsOptimizing] = useState(false)
+  const [showModal, setShowModal] = useState(false)
+  const [activeOptimizations, setActiveOptimizations] = useState<any[]>([])
+  const [appliedOptimizations, setAppliedOptimizations] = useState<number[]>([])
+
   const totalSpend = expenses.reduce((sum, item) => sum + item.amount, 0)
 
   const handleAddExpense = (e: React.FormEvent) => {
@@ -61,6 +67,63 @@ export default function SmartSpendPage() {
     setExpenses([newExpense, ...expenses])
     setTitle('')
     setAmount('')
+  }
+
+  const handleOptimize = () => {
+    if (expenses.length === 0) {
+      alert('Please add some expenses first to run optimization analysis!')
+      return
+    }
+
+    setIsOptimizing(true)
+    setTimeout(() => {
+      setIsOptimizing(false)
+
+      const recommendations = expenses.map((exp) => {
+        let title = 'General Savings Plan'
+        let desc = `Apply standard discount code for budget optimization on "${exp.title}"`
+        let savings = Math.round(exp.amount * 0.05) // 5% default
+
+        if (exp.category === 'Tech') {
+          title = 'Cloud Tier Optimization'
+          desc = `Downgrade idle node resources on "${exp.title}"`
+          savings = Math.round(exp.amount * 0.15) // 15% for Tech
+        } else if (exp.category === 'Food') {
+          title = 'Vendor Discount Promo'
+          desc = `Apply corporate meal coupons to "${exp.title}"`
+          savings = Math.round(exp.amount * 0.10) // 10% for Food
+        } else if (exp.category === 'Utilities') {
+          title = 'Utility Plan Migration'
+          desc = `Switch "${exp.title}" to standard business package`
+          savings = Math.round(exp.amount * 0.08) // 8% for Utilities
+        }
+
+        return {
+          id: exp.id,
+          title,
+          desc,
+          savings: savings > 0 ? savings : 100
+        }
+      })
+
+      setActiveOptimizations(recommendations)
+      setShowModal(true)
+    }, 1200)
+  }
+
+  const applySavings = (id: number, savings: number) => {
+    setExpenses((prev) =>
+      prev.map((exp) => {
+        if (exp.id === id) {
+          return {
+            ...exp,
+            amount: Math.max(0, exp.amount - savings)
+          }
+        }
+        return exp
+      })
+    )
+    setAppliedOptimizations((prev) => [...prev, id])
   }
 
   return (
@@ -82,7 +145,20 @@ export default function SmartSpendPage() {
         <div className={styles.headerContainer}>
           <h1 className={styles.pageTitle}>Smart Spend Dashboard</h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <span className={styles.badge}>Track & Optimize</span>
+            <button
+              className={styles.optimizeBtn}
+              onClick={handleOptimize}
+              disabled={isOptimizing}
+            >
+              {isOptimizing ? (
+                <>
+                  <span className={styles.spinner} />
+                  Analyzing...
+                </>
+              ) : (
+                'Track & Optimize'
+              )}
+            </button>
             <Link href="/profile" style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', display: 'block', border: '2px solid white', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
               <img src="/person-logo.png" alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </Link>
@@ -172,6 +248,74 @@ export default function SmartSpendPage() {
             </div>
           </div>
         </div>
+
+        {/* AI Optimizer Insights Modal */}
+        {showModal && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.modalContent}>
+              <div className={styles.modalHeader}>
+                <h2 className={styles.modalTitle}>💡 AI Spending Insights</h2>
+                <button
+                  className={styles.closeBtn}
+                  onClick={() => setShowModal(false)}
+                >
+                  &times;
+                </button>
+              </div>
+
+              <div className={styles.optimizationSummary}>
+                <p>
+                  Our AI analyzed your current transactions and identified{' '}
+                  <strong>
+                    {activeOptimizations.filter(
+                      (opt) => !appliedOptimizations.includes(opt.id)
+                    ).length}
+                  </strong>{' '}
+                  new ways to optimize your cash flow.
+                </p>
+              </div>
+
+              <div className={styles.optimizationsList}>
+                {activeOptimizations.map((opt) => {
+                  const isApplied = appliedOptimizations.includes(opt.id)
+                  return (
+                    <div key={opt.id} className={styles.optimizationCard}>
+                      <div className={styles.optimizationInfo}>
+                        <h4 className={styles.optimizationTitle}>{opt.title}</h4>
+                        <p className={styles.optimizationDesc}>{opt.desc}</p>
+                        <span className={styles.savingsAmount}>
+                          Save Rs. {opt.savings.toLocaleString()}
+                        </span>
+                      </div>
+                      <div>
+                        {isApplied ? (
+                          <span className={styles.appliedBadge}>
+                            ✓ Applied
+                          </span>
+                        ) : (
+                          <button
+                            className={styles.applyBtn}
+                            onClick={() => applySavings(opt.id, opt.savings)}
+                          >
+                            Apply
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+
+              <button
+                className={styles.submitBtn}
+                onClick={() => setShowModal(false)}
+                style={{ marginTop: '1rem' }}
+              >
+                Close Dashboard
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
