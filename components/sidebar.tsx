@@ -137,7 +137,11 @@ const LogoutIcon = ({ size = 24 }: IconProps) => (
   </svg>
 )
 
-export default function Sidebar() {
+export default function Sidebar({
+  variant = 'standard'
+}: {
+  variant?: 'standard' | 'artwork'
+}) {
   const pathname = usePathname()
 
   const menuItems = [
@@ -151,7 +155,9 @@ export default function Sidebar() {
   ]
 
   return (
-    <aside className="sidebar">
+    <aside
+      className={`sidebar ${variant === 'artwork' ? 'variant-artwork' : ''}`}
+    >
       <div className="sidebar-top">
         {/* Logo - 💡 <Link> එක අයින් කරලා නිකන්ම div එකක් විතරක් ඉතිරි කළා, දැන් ක්ලික් වෙන්නේ නැහැ */}
         <div className="logo-wrapper">
@@ -199,6 +205,25 @@ export default function Sidebar() {
           border-radius: 0 25px 25px 0;
           box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
           flex-shrink: 0;
+        }
+
+        .sidebar.variant-artwork {
+          background: #1d0730 url('/loginshellbg.png') no-repeat center center;
+          background-size: cover;
+          border-radius: 0;
+          box-shadow: none;
+        }
+
+        .sidebar.variant-artwork .logo-img {
+          background: transparent;
+          border-radius: 0;
+          width: 60px;
+          height: 60px;
+        }
+
+        .sidebar.variant-artwork .menu-item.active {
+          background: rgba(154, 92, 151, 0.45);
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
         }
 
         .sidebar-top {

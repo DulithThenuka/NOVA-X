@@ -1,76 +1,184 @@
-/* app/home/home.module.css */
+/* app/Home/home.module.css */
 
-.homeContainer {
+.pageContainer {
+  position: relative;
   display: flex;
-  flex-direction: column;
+  min-height: 100vh;
+  width: 100vw;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  background: #eef2f3;
-  font-family: system-ui, sans-serif;
+  background: url('/loginmainbg.png') no-repeat center center;
+  background-size: cover;
   padding: 2rem;
+  box-sizing: border-box;
+  font-family: var(--font-bai, 'Bai Jamjuree'), system-ui, -apple-system, sans-serif;
+}
+
+.cardContainer {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  max-width: 1060px;
+  min-height: 480px;
+  overflow: hidden;
+  border-radius: 56px;
+  background-color: white;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 4px 8px 3px rgba(0, 0, 0, 0.15);
+}
+
+@media (min-width: 1024px) {
+  .cardContainer {
+    min-height: 660px;
+  }
+}
+
+/* Left side: Artwork */
+.artworkSide {
+  position: relative;
+  display: none;
+  width: 46.2%;
+  flex-shrink: 0;
+  overflow: hidden;
+  background-color: #1d0730;
+}
+
+@media (min-width: 768px) {
+  .artworkSide {
+    display: block;
+  }
+}
+
+.artworkBg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.logoCenter {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoImg {
+  width: 38%;
+  max-width: 276px;
+}
+
+/* Right side: Content */
+.contentSide {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  padding: 2.5rem 2rem;
+}
+
+.contentInner {
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
 }
 
 .title {
-  font-size: 3rem;
-  font-weight: bold;
-  color: #1d0730;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: black;
   margin-bottom: 0.5rem;
-  margin-top: 15vh;
+  letter-spacing: -0.5px;
 }
 
 .subtitle {
-  color: #666;
-  margin-bottom: 2.5rem;
   font-size: 1.1rem;
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 2.5rem;
 }
 
 .buttonGrid {
-  display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  max-width: 800px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
   margin-bottom: 1.5rem;
 }
 
 .btn {
-  padding: 1rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 64px;
   color: white !important;
   text-decoration: none;
-  border-radius: 15px;
-  font-weight: bold;
-  font-size: 1rem;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  transition: transform 0.2s;
+  border-radius: 40px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 4px 8px 3px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .btn:hover {
   transform: translateY(-2px);
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.3), 0 8px 12px 6px rgba(0, 0, 0, 0.15);
 }
 
-.btnAccounts { background: #0061ff; }
-.btnTransfer { background: #00b050; }
-.btnBills { background: #9200ef; }
-.btnStatement { background: #ff5500; }
+.btnAccounts {
+  background: linear-gradient(135deg, #0061ff, #004ecc);
+}
+
+.btnTransfer {
+  background: linear-gradient(135deg, #00b050, #008a3d);
+}
+
+.btnBills {
+  background: linear-gradient(135deg, #9200ef, #7300bd);
+}
+
+.btnStatement {
+  background: linear-gradient(135deg, #ff5500, #cc4400);
+}
 
 .centerRow {
   display: flex;
   justify-content: center;
+  margin-top: 1rem;
 }
 
 .btnSmartSpend {
-  padding: 1rem 3rem;
-  background: #e50000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 64px;
+  width: 100%;
+  max-width: 320px;
+  background: linear-gradient(135deg, #e50000, #b30000);
   color: white !important;
   text-decoration: none;
-  border-radius: 15px;
-  font-weight: bold;
-  font-size: 1rem;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  transition: transform 0.2s;
+  border-radius: 40px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 4px 8px 3px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .btnSmartSpend:hover {
   transform: translateY(-2px);
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.3), 0 8px 12px 6px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 640px) {
+  .pageContainer {
+    padding: 1rem;
+  }
+  .cardContainer {
+    border-radius: 36px;
+  }
+  .buttonGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .title {
+    font-size: 2rem;
+  }
 }
