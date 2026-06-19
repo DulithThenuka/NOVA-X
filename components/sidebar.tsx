@@ -131,7 +131,9 @@ export default function Sidebar() {
       </div>
 
       <div className="sidebar-footer">
-        <Settings size={24} />
+        <Link href="/profile" className="footer-link">
+          <Settings size={24} />
+        </Link>
         <HelpCircle size={24} />
       </div>
 
@@ -219,6 +221,20 @@ export default function Sidebar() {
           gap: 1.5rem;
           padding: 1.5rem;
           color: white;
+          align-items: center;
+        }
+
+        .footer-link {
+          color: white;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .footer-link:hover {
+          transform: scale(1.1);
+          opacity: 0.9;
         }
 
         @media (max-width: 768px) {

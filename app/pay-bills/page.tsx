@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import Sidebar from '../../components/sidebar'
 import {
   Search,
@@ -127,7 +128,7 @@ export default function PayBillsPage() {
           <div className="topbar-icons">
             <Search size={20} />
             <Settings size={20} />
-            <div className="avatar">
+            <Link href="/profile" className="avatar block">
               <Image
                 src="/avatar.png"
                 alt="Profile"
@@ -135,7 +136,7 @@ export default function PayBillsPage() {
                 height={36}
                 style={{ objectFit: 'cover', borderRadius: '50%' }}
               />
-            </div>
+            </Link>
           </div>
         </header>
 

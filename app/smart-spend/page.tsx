@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react'
 import styles from './spend.module.css'
+import Link from 'next/link'
 
 // @ts-ignore
-import Sidebar from '@/components/Sidebar' // 💡 TypeScript එකට මේ Import එක check කරන එක bypass කළා
+import Sidebar from '@/components/sidebar'
 
 interface Expense {
   id: number
@@ -80,7 +81,12 @@ export default function SmartSpendPage() {
         {/* Header */}
         <div className={styles.headerContainer}>
           <h1 className={styles.pageTitle}>Smart Spend Dashboard</h1>
-          <span className={styles.badge}>Track & Optimize</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <span className={styles.badge}>Track & Optimize</span>
+            <Link href="/profile" style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', display: 'block', border: '2px solid white', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
+              <img src="/person-logo.png" alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </Link>
+          </div>
         </div>
 
         {/* Grid Layout */}

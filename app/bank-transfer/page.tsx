@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import Sidebar from '@/components/sidebar'
 
 type Errors = Partial<{
@@ -72,13 +73,13 @@ export default function Home() {
               <button className="topbar-icon" aria-label="notifications">
                 <img src="/notification.png" alt="notifications" />
               </button>
-              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-200">
+              <Link href="/profile" className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-200 block">
                 <img
                   src="/avatar.png"
                   alt="avatar"
                   className="w-full h-full object-cover bg-white"
                 />
-              </div>
+              </Link>
             </div>
           </div>
           {step === 'form' ? (
