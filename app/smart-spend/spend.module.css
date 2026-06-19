@@ -3,10 +3,10 @@
 .spendPage {
   padding: 2rem;
   font-family: system-ui, -apple-system, sans-serif;
-  background: #f1f1f1;
+  background: #f3f4f6; /* 💡 ඇස් වලට පහසු පිරිසිදු ලා අළු පාටක් දැම්මා */
   min-height: 100vh;
   color: #333;
-  width: 100%; /* Layout එක ඇදල යෑම වැළැක්වීමට */
+  width: 100%;
   box-sizing: border-box;
 }
 
@@ -19,9 +19,9 @@
 }
 
 .pageTitle {
-  font-size: 28px;
+  font-size: 32px; /* Dashboard Header එකට ගැලපෙන්න 32px කළා */
   font-weight: 700;
-  color: #000;
+  color: #111827;
   margin: 0;
 }
 
@@ -80,7 +80,6 @@
   to { transform: rotate(360deg); }
 }
 
-
 /* Glassmorphic Modal Styles */
 .modalOverlay {
   position: fixed;
@@ -89,6 +88,8 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.4);
+  /* 💡 Safari සහ iOS බ්‍රවුසර් වල රතු ඉරි වැටීම සහ Layout කැඩීම වැළැක්වීමට vendor prefix එක එකතු කළා */
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -245,7 +246,6 @@
   to { transform: translateY(0); opacity: 1; }
 }
 
-
 .gridContainer {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -279,7 +279,7 @@
   margin: 0;
   font-size: 36px;
   font-weight: 700;
-  color: #000;
+  color: #111827;
 }
 
 .formCard {
@@ -293,7 +293,7 @@
   margin: 0 0 1.5rem 0;
   font-size: 20px;
   font-weight: 600;
-  color: #000;
+  color: #111827;
 }
 
 .formElement {
@@ -311,7 +311,7 @@
 .formGroup label {
   font-weight: 600;
   font-size: 14px;
-  color: #333;
+  color: #374151;
 }
 
 .inputField {
@@ -321,13 +321,28 @@
   font-size: 14px;
   outline: none;
   background-color: #ffffff !important;
-  color: #000 !important;
+  color: #111827 !important;
   width: 100%;
   box-sizing: border-box;
+  transition: all 0.2s ease;
 }
 
 .inputField:focus {
   border-color: #450043;
+  box-shadow: 0 0 0 2px rgba(69, 0, 67, 0.15); /* 💡 Focus එක වඩාත් පැහැදිලි කළා */
+}
+
+/* 💡 UX වැලිඩේෂන් සඳහා Input Error සහ Error Text Styles එකතු කළා */
+.inputError {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+}
+
+.errorText {
+  font-size: 12px;
+  color: #ef4444;
+  font-weight: 500;
+  margin-top: 0.15rem;
 }
 
 .submitBtn {
@@ -346,6 +361,11 @@
 
 .submitBtn:hover {
   background: #5a0058 !important;
+  transform: translateY(-1px);
+}
+
+.submitBtn:active {
+  transform: translateY(0);
 }
 
 .rightColumn {
@@ -374,17 +394,23 @@
   border: 1.5px solid #f0f0f0;
   border-radius: 12px;
   background: #fff;
+  transition: all 0.2s ease;
+}
+
+.transactionItem:hover {
+  border-color: #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
 }
 
 .txTitle {
   margin: 0 0 0.25rem 0;
   font-weight: 600;
-  color: #000;
+  color: #111827;
 }
 
 .txCategory {
   font-size: 12px;
-  color: #666;
+  color: #4b5563;
   background: #f3f4f6;
   padding: 0.2rem 0.6rem;
   border-radius: 10px;

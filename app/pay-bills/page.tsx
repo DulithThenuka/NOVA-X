@@ -88,7 +88,8 @@ export default function PayBillsPage() {
     return Object.keys(newErrors).length === 0
   }
 
-  function handlePayNow() {
+  // 💡 Database එකට සේව් කරන්න ඕන නිසා මේක async function එකක් බවට පත් කළා
+  async function handlePayNow() {
     if (!validateForm()) {
       return
     }
@@ -104,8 +105,40 @@ export default function PayBillsPage() {
     }
 
     const confNum = Math.floor(10000000 + Math.random() * 90000000).toString()
-    setConfirmationNumber(confNum)
-    setScreen('success')
+
+    try {
+      // 📡 අපි ලියපු Next.js API endpoint එකට Fetch Request එකක් යැවීම
+      const response = await fetch('/api/bills', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          biller_id: selectedBiller?.id,
+          biller_name: selectedBiller?.name,
+          account_number: accountNumber.trim(),
+          bill_id: billId.trim(),
+          amount: amount,
+          remarks: remarks.trim() || 'No remarks',
+          confirmation_number: confNum
+        })
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        // API එක සාර්ථක නම් විතරක් Success Screen එක පෙන්වයි
+        setConfirmationNumber(confNum)
+        setScreen('success')
+      } else {
+        // Database Error එකක් ආවොත් Failed Screen එක පෙන්වයි
+        setFailReason(data.error || 'Failed to record payment in database.')
+        setScreen('failed')
+      }
+    } catch (error: any) {
+      setFailReason('Network error: Could not connect to the database API.')
+      setScreen('failed')
+    }
   }
 
   function resetToHome() {
@@ -123,19 +156,39 @@ export default function PayBillsPage() {
       <Sidebar />
 
       <div className="content">
+        {/* 💡 100%ක්ම Interactive සහ Clickable කරපු Topbar Header එක */}
         <header className="topbar">
-          <h1>Pay Bills</h1>
+          <h1 className="page-title">Pay Bills</h1>
           <div className="topbar-icons">
-            <Search size={20} />
-            <Settings size={20} />
-            <Link href="/profile" className="avatar block">
-              <Image
-                src="/avatar.png"
-                alt="Profile"
-                width={36}
-                height={36}
-                style={{ objectFit: 'cover', borderRadius: '50%' }}
-              />
+            {/* ක්ලික් කරන්න පුළුවන් Search බටන් එක */}
+            <button
+              className="icon-btn"
+              onClick={() => alert('Search Billers functionality coming soon!')}
+              title="Search"
+            >
+              <Search size={20} />
+            </button>
+
+            {/* ක්ලික් කරන්න පුළුවන් Settings බටන් එක */}
+            <button
+              className="icon-btn"
+              onClick={() => alert('Bill payment settings pane coming soon!')}
+              title="Settings"
+            >
+              <Settings size={20} />
+            </button>
+
+            {/* ක්ලික් කරන්න පුළුවන් Profile එක */}
+            <Link href="/profile" className="avatar-btn" title="View Profile">
+              <div className="avatar-wrapper">
+                <Image
+                  src="/avatar.png"
+                  alt="Profile"
+                  width={36}
+                  height={36}
+                  style={{ objectFit: 'cover' }}
+                />
+              </div>
             </Link>
           </div>
         </header>
@@ -285,6 +338,9 @@ export default function PayBillsPage() {
           display: flex;
           min-height: 100vh;
           background: #f3f4f6;
+          width: 100vw;
+          overflow-x: hidden;
+          font-family: system-ui, -apple-system, sans-serif;
         }
         .content {
           flex: 1;
@@ -299,26 +355,67 @@ export default function PayBillsPage() {
           padding: 1.1rem 2.5rem;
           border-bottom: 1px solid #eee;
         }
-        .topbar h1 {
-          font-size: 1.25rem;
-          font-weight: 600;
-          color: #333;
+        .page-title {
+          font-size: 32px;
+          font-weight: 700;
+          color: #111827;
+          margin: 0;
         }
         .topbar-icons {
           display: flex;
           align-items: center;
-          gap: 1.5rem;
-          color: #666;
+          gap: 1rem;
+          color: #4b5563;
         }
-        .avatar {
-          width: 36px;
-          height: 36px;
+        
+        .icon-btn {
+          background: transparent;
+          border: none;
+          color: #4b5563;
+          cursor: pointer;
+          padding: 8px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s ease;
+          outline: none;
+        }
+        .icon-btn:hover {
+          background: #e5e7eb;
+          color: #111827;
+        }
+        .icon-btn:active {
+          transform: scale(0.92);
+        }
+
+        .avatar-btn {
+          background: transparent;
+          border: none;
+          padding: 0;
+          cursor: pointer;
+          outline: none;
+          text-decoration: none;
+        }
+        .avatar-wrapper {
+          width: 44px;
+          height: 44px;
           border-radius: 50%;
           overflow: hidden;
           display: flex;
           align-items: center;
           justify-content: center;
+          border: 2px solid #fff;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          transition: transform 0.2s ease;
         }
+        .avatar-btn:hover .avatar-wrapper {
+          transform: scale(1.05);
+        }
+        .avatar-btn:active .avatar-wrapper {
+          transform: scale(0.95);
+        }
+
         .main {
           flex: 1;
           display: flex;
@@ -504,6 +601,18 @@ export default function PayBillsPage() {
         }
         .back-home-btn:hover {
           background: #450043;
+        }
+
+        @media (max-width: 768px) {
+          .biller-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+          .main {
+            padding: 1rem;
+          }
+          .card {
+            padding: 1.5rem;
+          }
         }
       `}</style>
     </div>
