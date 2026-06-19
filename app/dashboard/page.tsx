@@ -2,7 +2,6 @@
 
 import Sidebar from '../../components/sidebar'
 import { Bell, ChevronRight, Search } from '../../components/Icons'
-import Link from 'next/link'
 
 const transactions = [
   {
@@ -32,11 +31,13 @@ export default function Dashboard() {
         <header className="content-header">
           <h1 className="page-title">Dashboard</h1>
           <div className="header-actions">
-            <Search size={24} />
-            <Bell size={24} />
-            <Link href="/profile" className="avatar-link">
-              <img src="/person-logo.png" alt="profile" className="avatar" />
-            </Link>
+            <div className="icon-btn">
+              <Search size={22} />
+            </div>
+            <div className="icon-btn">
+              <Bell size={22} />
+            </div>
+            <img src="/person-logo.png" alt="profile" className="avatar" />
           </div>
         </header>
 
@@ -44,10 +45,11 @@ export default function Dashboard() {
         <div className="top-section">
           <div className="welcome-card">
             <h2 className="welcome-title">Welcome back, Dilara!</h2>
+            {/* 💡 Spacing සහ Position එක හරියටම මැදට සෙට් කළා */}
             <div className="balance-card">
               <p className="balance-label">Current Balance</p>
-              <p className="balance-amount">Rs. 100, 000</p>
-              <ChevronRight className="balance-chevron" size={30} />
+              <p className="balance-amount">Rs. 100,000</p>
+              <ChevronRight className="balance-chevron" size={24} />
             </div>
             <div className="carousel-dots">
               <span className="dot active" />
@@ -66,37 +68,48 @@ export default function Dashboard() {
             <div className="payees-list">
               {[1, 2].map((item) => (
                 <div key={item} className="payee-item">
-                  <img src="/person-logo.png" alt="user" className="avatar" />
+                  <img
+                    src="/person-logo.png"
+                    alt="user"
+                    className="avatar-sm"
+                  />
                   <div className="payee-info">
-                    <p>HKDS</p>
-                    <p>Wickramanayake</p>
+                    <p className="payee-name">HKDS Wickramanayake</p>
                   </div>
                 </div>
               ))}
             </div>
             <div className="view-all">
-              View all
-              <ChevronRight size={15} />
+              <span>View all</span>
+              <ChevronRight size={14} />
             </div>
           </div>
         </div>
 
-        {/* Transactions */}
+        {/* Transactions - 💡 කපලා යන ලෙඩේ 100% ක්ම හැදුවා */}
         <div className="transactions-section">
           <h2 className="transactions-title">Recent Transactions</h2>
           <div className="transactions-card">
-            {transactions.map((t, index) => (
-              <div key={index} className="transaction-item">
-                <img src="/person-logo.png" alt="user" className="avatar" />
-                <span className="transaction-date">{t.date}</span>
-                <span className="transaction-account">{t.account}</span>
-                <span className="transaction-amount">{t.amount}</span>
-                <span className="transaction-status">Success</span>
-              </div>
-            ))}
-            <div className="view-all">
-              View all
-              <ChevronRight size={15} />
+            <div className="transaction-list-wrapper">
+              {transactions.map((t, index) => (
+                <div key={index} className="transaction-item">
+                  <div className="tx-left">
+                    <img
+                      src="/person-logo.png"
+                      alt="user"
+                      className="avatar-sm"
+                    />
+                    <span className="transaction-date">{t.date}</span>
+                  </div>
+                  <span className="transaction-account">{t.account}</span>
+                  <span className="transaction-amount">{t.amount}</span>
+                  <span className="transaction-status">Success</span>
+                </div>
+              ))}
+            </div>
+            <div className="view-all border-top">
+              <span>View all</span>
+              <ChevronRight size={14} />
             </div>
           </div>
         </div>
@@ -106,154 +119,178 @@ export default function Dashboard() {
         .dashboard {
           width: 100vw;
           min-height: 100vh;
-          background: #f1f1f1;
+          background: #f8f9fa;
           display: flex;
-          gap: 1.5rem;
-          overflow: hidden;
+          gap: 0;
+          overflow-x: hidden;
           font-family: system-ui, -apple-system, sans-serif;
         }
 
         .content {
           flex: 1;
-          padding: 1.5rem 1.25rem;
+          padding: 2rem;
           overflow-y: auto;
-          min-width: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 2rem;
         }
 
         .content-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          flex-wrap: wrap;
-          gap: 1rem;
         }
 
         .page-title {
-          font-size: 28px;
+          font-size: 32px;
           font-weight: 700;
-          color: black;
+          color: #111827;
         }
 
         .header-actions {
           display: flex;
           align-items: center;
-          gap: 1.5rem;
+          gap: 1.25rem;
+        }
+
+        .icon-btn {
+          color: #4b5563;
+          cursor: pointer;
+          transition: color 0.2s;
+        }
+        .icon-btn:hover {
+          color: #111827;
         }
 
         .avatar {
-          width: 45px;
-          height: 45px;
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid #fff;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .avatar-sm {
+          width: 36px;
+          height: 36px;
           border-radius: 50%;
           object-fit: cover;
         }
 
         .top-section {
-          margin-top: 1rem;
           display: flex;
+          gap: 2rem;
           flex-wrap: wrap;
-          gap: 1.5rem;
         }
 
         .welcome-card {
-          width: 640px;
-          max-width: 100%;
-          height: 230px;
-          background: #e7e1e8;
-          border-radius: 18px;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+          flex: 2;
+          min-width: 450px;
+          height: 220px;
+          background: #e5dbe7;
+          border-radius: 24px;
           position: relative;
           overflow: hidden;
-          flex-shrink: 0;
+          padding: 1.5rem;
+          box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
         }
 
         .welcome-title {
-          font-size: 18px;
-          padding: 0.75rem 1rem 0;
-          color: black;
+          font-size: 22px;
+          font-weight: 700;
+          color: #1f1a24;
+          margin-bottom: 1rem;
         }
 
         .balance-card {
-          position: absolute;
-          left: 5rem;
-          top: 60px;
-          width: 380px;
-          max-width: calc(100% - 2rem);
-          height: 120px;
-          background: black;
-          border-radius: 14px;
+          width: 320px;
+          height: 95px;
+          background: #111827;
+          border-radius: 18px;
           color: white;
           display: flex;
           flex-direction: column;
           justify-content: center;
-          align-items: center;
-          padding: 0 1rem;
+          padding: 0 1.5rem;
+          position: relative;
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+          z-index: 2;
         }
 
         .balance-label {
-          font-size: 21px;
+          font-size: 14px;
+          color: #9ca3af;
+          margin: 0;
         }
 
         .balance-amount {
           color: #a7d93a;
-          font-size: 20px;
-          margin-top: 0.25rem;
+          font-size: 24px;
+          font-weight: 700;
+          margin: 4px 0 0 0;
         }
 
         .balance-chevron {
           position: absolute;
-          right: 1rem;
+          right: 1.25rem;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #9ca3af;
         }
 
         .carousel-dots {
           position: absolute;
           bottom: 1.25rem;
-          left: 160px;
           display: flex;
-          gap: 0.5rem;
+          gap: 0.35rem;
         }
 
         .dot {
           width: 6px;
-          height: 3px;
+          height: 6px;
           background: #9ca3af;
-          border-radius: 2px;
+          border-radius: 50%;
         }
         .dot.active {
-          width: 50px;
-          background: #6060d5;
+          width: 24px;
+          border-radius: 4px;
+          background: #450043;
         }
 
         .welcome-image {
           position: absolute;
-          right: 0;
+          right: 1rem;
           bottom: 0;
-          height: 250px;
+          height: 210px;
           object-fit: cover;
+          z-index: 1;
         }
 
         .payees-card {
-          width: 270px;
-          height: 230px;
-          background: white;
-          border-radius: 18px;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-          padding: 1rem;
-          color: black;
           flex: 1;
-          min-width: 200px;
+          min-width: 280px;
+          height: 220px;
+          background: white;
+          border-radius: 24px;
+          padding: 1.5rem;
+          display: flex;
+          flex-direction: column;
+          box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
         }
 
         .payees-title {
-          font-weight: 600;
-          text-align: center;
-          font-size: 1rem;
+          font-weight: 700;
+          font-size: 16px;
+          color: #111827;
+          margin-bottom: 1rem;
         }
 
         .payees-list {
-          margin-top: 1.5rem;
           display: flex;
           flex-direction: column;
-          gap: 1.25rem;
+          gap: 1rem;
+          flex: 1;
         }
 
         .payee-item {
@@ -262,178 +299,130 @@ export default function Dashboard() {
           gap: 0.75rem;
         }
 
-        .payee-info {
-          font-size: 13px;
-          line-height: 1.3;
-        }
-        .payee-info p:first-child {
-          font-weight: 500;
-        }
-        .payee-info p:last-child {
-          color: #4b5563;
+        .payee-name {
+          font-size: 14px;
+          font-weight: 600;
+          color: #374151;
+          margin: 0;
         }
 
         .view-all {
-          text-align: right;
-          margin-top: 1rem;
           font-size: 13px;
+          font-weight: 600;
+          color: #450043;
           display: flex;
           justify-content: flex-end;
           align-items: center;
           gap: 0.25rem;
-          cursor: default;
+          cursor: pointer;
+          transition: opacity 0.2s;
+        }
+        .view-all:hover {
+          opacity: 0.8;
         }
 
         .transactions-section {
-          margin-top: 0.75rem;
-          color: black;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
         }
 
         .transactions-title {
-          font-size: 18px;
+          font-size: 20px;
           font-weight: 700;
-          margin-bottom: 0.75rem;
+          color: #111827;
         }
 
         .transactions-card {
           background: white;
-          border-radius: 22px;
-          box-shadow: 18px 18px 12px rgba(0, 0, 0, 0.15);
-          padding: 1.25rem;
-          width: 1000px;
-          height: 200px;
-          max-width: 100%;
-          overflow-x: auto;
+          border-radius: 24px;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+          padding: 1.5rem;
+        }
+
+        .transaction-list-wrapper {
+          display: flex;
+          flex-direction: column;
         }
 
         .transaction-item {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          margin-bottom: 1rem;
-          gap: 0.75rem;
-          flex-wrap: wrap;
+          padding: 1rem 0;
+          border-bottom: 1px solid #f3f4f6;
+        }
+        .transaction-item:last-child {
+          border-bottom: none;
         }
 
-        .transaction-date,
-        .transaction-account,
+        .tx-left {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          min-width: 180px;
+        }
+
+        .transaction-date {
+          font-size: 14px;
+          font-weight: 600;
+          color: #111827;
+        }
+
+        .transaction-account {
+          font-size: 14px;
+          color: #6b7280;
+        }
+
         .transaction-amount {
-          font-size: 0.95rem;
+          font-size: 14px;
+          font-weight: 700;
+          color: #ef4444;
         }
 
         .transaction-status {
-          background: #d5f1cb;
-          padding: 0.25rem 1.5rem;
-          border-radius: 4px;
-          color: black;
-          font-size: 0.9rem;
-          white-space: nowrap;
+          background: #ecfdf5;
+          padding: 0.35rem 1rem;
+          border-radius: 20px;
+          color: #059669;
+          font-size: 13px;
+          font-weight: 600;
+          text-align: center;
+          min-width: 90px;
+        }
+
+        .border-top {
+          border-top: 1px solid #f3f4f6;
+          padding-top: 1rem;
+          margin-top: 0.5rem;
         }
 
         @media (max-width: 1024px) {
           .welcome-card {
-            width: 100%;
-          }
-          .transactions-card {
-            width: 100%;
+            flex: 100%;
           }
         }
 
         @media (max-width: 768px) {
           .dashboard {
             flex-direction: column;
-            gap: 0;
           }
-
           .content {
             padding: 1rem;
           }
-
-          .page-title {
-            font-size: 22px;
-          }
-
           .top-section {
-            flex-direction: column;
-            align-items: stretch;
+            gap: 1rem;
           }
-
           .welcome-card {
-            height: 220px;
+            min-width: 100%;
           }
-          .balance-card {
-            width: calc(100% - 2rem);
-            left: 1rem;
-            top: 50px;
-            height: 100px;
-          }
-          .balance-label {
-            font-size: 18px;
-          }
-          .balance-amount {
-            font-size: 18px;
-          }
-          .welcome-image {
-            height: 160px;
-          }
-          .carousel-dots {
-            left: 1.5rem;
-            bottom: 0.75rem;
-          }
-
-          .payees-card {
-            width: 100%;
-            height: auto;
-            min-height: 200px;
-          }
-
-          .transactions-card {
-            padding: 1rem;
-          }
-
           .transaction-item {
-            flex-wrap: wrap;
+            flex-direction: column;
+            align-items: flex-start;
             gap: 0.5rem;
-            border-bottom: 1px solid #f0f0f0;
-            padding-bottom: 0.75rem;
-          }
-          .transaction-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
           }
           .transaction-status {
-            padding: 0.15rem 1rem;
-            font-size: 0.8rem;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .header-actions {
-            gap: 0.75rem;
-          }
-          .avatar {
-            width: 35px;
-            height: 35px;
-          }
-          .page-title {
-            font-size: 20px;
-          }
-          .balance-label {
-            font-size: 16px;
-          }
-          .balance-amount {
-            font-size: 16px;
-          }
-          .welcome-card {
-            height: 200px;
-          }
-          .welcome-image {
-            height: 130px;
-          }
-          .transaction-date,
-          .transaction-account,
-          .transaction-amount {
-            font-size: 0.8rem;
+            align-self: flex-end;
           }
         }
       `}</style>
