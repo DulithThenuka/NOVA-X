@@ -1,5 +1,5 @@
 'use client'
-
+//
 import Link from 'next/link'
 // 💡 Relative path එක වෙනුවට Next.js standard alias එක (@/) පාවිච්චි කළා, TypeScript warning එක bypass කළා
 // @ts-ignore
