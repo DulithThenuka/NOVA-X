@@ -5,6 +5,32 @@ import { usePathname } from 'next/navigation'
 
 // Minimal icon components to avoid external dependency
 type IconProps = { size?: number }
+
+const HomeIcon = ({ size = 18 }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M3 9.5L12 4L21 9.5V19C21 19.5523 20.5523 20 20 20H4C3.44772 20 3 19.5523 3 19V9.5Z"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M9 20V12H15V20"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+
 const LayoutGrid = ({ size = 18 }: IconProps) => (
   <svg
     width={size}
@@ -93,10 +119,29 @@ const HelpCircle = ({ size = 24 }: IconProps) => (
   </svg>
 )
 
+const LogoutIcon = ({ size = 24 }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M18 12H9m9 0l-3-3m3 3l-3 3"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+
 export default function Sidebar() {
   const pathname = usePathname()
 
   const menuItems = [
+    { label: 'HOME', path: '/Home' },
     { label: 'DASHBOARD', path: '/dashboard' },
     { label: 'ACCOUNTS', path: '/bank-accounts' },
     { label: 'BANK TRANSFER', path: '/bank-transfer' },
@@ -108,7 +153,7 @@ export default function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-top">
-        {/* Logo */}
+        {/* Logo - 💡 <Link> එක අයින් කරලා නිකන්ම div එකක් විතරක් ඉතිරි කළා, දැන් ක්ලික් වෙන්නේ නැහැ */}
         <div className="logo-wrapper">
           <img src="/loginlogo.png" alt="logo" className="logo-img" />
           <h1 className="brand-name">NOVA BANK</h1>
@@ -121,6 +166,7 @@ export default function Sidebar() {
             return (
               <Link key={item.label} href={item.path} className="menu-link">
                 <button className={`menu-item ${isActive ? 'active' : ''}`}>
+                  {item.label === 'HOME' && <HomeIcon size={18} />}
                   {item.label === 'DASHBOARD' && <LayoutGrid size={18} />}
                   {item.label}
                 </button>
@@ -130,11 +176,17 @@ export default function Sidebar() {
         </nav>
       </div>
 
+      {/* Footer සෙක්ෂන් එක */}
       <div className="sidebar-footer">
-        <Link href="/profile" className="footer-link">
+        <Link href="/profile" className="footer-link" title="Settings">
           <Settings size={24} />
         </Link>
-        <HelpCircle size={24} />
+        <div className="footer-icon-wrapper" title="Help">
+          <HelpCircle size={24} />
+        </div>
+        <Link href="/login" className="footer-link logout-btn" title="Logout">
+          <LogoutIcon size={24} />
+        </Link>
       </div>
 
       <style jsx>{`
@@ -177,11 +229,11 @@ export default function Sidebar() {
         }
 
         .menu {
-          margin-top: 3rem;
+          margin-top: 2rem;
           padding: 0 1rem;
           display: flex;
           flex-direction: column;
-          gap: 1rem;
+          gap: 0.75rem;
         }
 
         .menu-link {
@@ -222,19 +274,25 @@ export default function Sidebar() {
           padding: 1.5rem;
           color: white;
           align-items: center;
+          justify-content: space-between;
         }
 
-        .footer-link {
+        .footer-link, .footer-icon-wrapper {
           color: white;
           text-decoration: none;
           display: inline-flex;
           align-items: center;
           transition: transform 0.2s, opacity 0.2s;
+          cursor: pointer;
         }
 
-        .footer-link:hover {
+        .footer-link:hover, .footer-icon-wrapper:hover {
           transform: scale(1.1);
           opacity: 0.9;
+        }
+
+        .logout-btn:hover {
+          color: #ff4d4d;
         }
 
         @media (max-width: 768px) {
