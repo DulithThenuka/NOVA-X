@@ -1,6 +1,6 @@
-/* ===== ROOT VARIABLES ===== */
-:root {
-  /* Colors */
+/* ===== GLOBAL STYLES WITH VARIABLES ===== */
+.accountsPage {
+  /* Variables ටික කෙලින්ම class එක ඇතුළටම දැම්මා (Next.js Build Error එක විසඳීමට) */
   --color-primary: #450043;
   --color-primary-hover: #5a0058;
   --color-primary-light: rgba(69, 0, 67, 0.1);
@@ -62,10 +62,8 @@
   --card-height: 190px;
   --form-width: 650px;
   --avatar-size: 40px;
-}
 
-/* ===== GLOBAL STYLES ===== */
-.accountsPage {
+  /* පරණ තිබුණු normal styles ටික */
   width: 100vw;
   min-height: 100vh;
   background: var(--color-background);
@@ -440,16 +438,13 @@
 
 /* Tablet */
 @media (max-width: 768px) {
-  :root {
+  .accountsPage {
+    flex-direction: column;
     --card-width: 100%;
     --card-height: 160px;
     --form-width: 100%;
     --font-4xl: 22px;
     --font-3xl: 20px;
-  }
-  
-  .accountsPage {
-    flex-direction: column;
   }
   
   .content {
@@ -477,7 +472,7 @@
 
 /* Mobile */
 @media (max-width: 480px) {
-  :root {
+  .accountsPage {
     --card-height: 150px;
     --avatar-size: 35px;
     --font-4xl: 20px;
@@ -532,7 +527,7 @@
 
 /* Small Mobile */
 @media (max-width: 360px) {
-  :root {
+  .accountsPage {
     --card-height: 130px;
     --font-xl: 14px;
     --font-md: 12px;
@@ -565,7 +560,7 @@
 
 /* Large Screens */
 @media (min-width: 1200px) {
-  :root {
+  .accountsPage {
     --card-width: 580px;
     --card-height: 200px;
     --form-width: 700px;
