@@ -25,7 +25,9 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false)
   const [success, setSuccess] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
-  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({})
 
   // Fetch user data
   useEffect(() => {
@@ -53,7 +55,7 @@ export default function ProfilePage() {
   const validate = () => {
     const errs: Record<string, string> = {}
     if (!fullName.trim()) errs.fullName = 'Full Name is required'
-    
+
     if (!email.trim()) {
       errs.email = 'Email is required'
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -132,7 +134,11 @@ export default function ProfilePage() {
               <Bell size={22} />
             </button>
             <div className="avatar-wrapper">
-              <img src="/person-logo.png" alt="Profile" className="avatar" />
+              <img
+                src="/avatar.png"
+                alt="Profile"
+                className="avatar bg-white"
+              />
             </div>
           </div>
         </header>
@@ -148,12 +154,16 @@ export default function ProfilePage() {
             <div className="overview-card">
               <div className="profile-badge-bg"></div>
               <div className="profile-avatar-large">
-                <img src="/person-logo.png" alt="avatar" />
-                <span className="role-tag">{user?.role?.toUpperCase() || 'CUSTOMER'}</span>
+                <img src="/avatar.png" alt="avatar" className="bg-white" />
+                <span className="role-tag">
+                  {user?.role?.toUpperCase() || 'CUSTOMER'}
+                </span>
               </div>
-              <h2 className="profile-name">{user?.full_name || 'Dilara Perera'}</h2>
+              <h2 className="profile-name">
+                {user?.full_name || 'Dilara Perera'}
+              </h2>
               <p className="profile-username">@{user?.username || 'dilara'}</p>
-              
+
               <div className="status-stats">
                 <div className="stat-item">
                   <span className="stat-value">Active</span>
@@ -181,7 +191,13 @@ export default function ProfilePage() {
               {errorMsg && <div className="error-alert">{errorMsg}</div>}
               {success && (
                 <div className="success-alert">
-                  <svg className="success-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                  <svg
+                    className="success-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                  >
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                   Profile updated successfully!
@@ -199,7 +215,11 @@ export default function ProfilePage() {
                       className={validationErrors.fullName ? 'error-input' : ''}
                       placeholder="Dilara Perera"
                     />
-                    {validationErrors.fullName && <span className="error-text">{validationErrors.fullName}</span>}
+                    {validationErrors.fullName && (
+                      <span className="error-text">
+                        {validationErrors.fullName}
+                      </span>
+                    )}
                   </div>
 
                   <div className="form-group">
@@ -211,7 +231,9 @@ export default function ProfilePage() {
                       className={validationErrors.nic ? 'error-input' : ''}
                       placeholder="200112345678"
                     />
-                    {validationErrors.nic && <span className="error-text">{validationErrors.nic}</span>}
+                    {validationErrors.nic && (
+                      <span className="error-text">{validationErrors.nic}</span>
+                    )}
                   </div>
                 </div>
 
@@ -225,7 +247,11 @@ export default function ProfilePage() {
                       className={validationErrors.email ? 'error-input' : ''}
                       placeholder="dilara@example.com"
                     />
-                    {validationErrors.email && <span className="error-text">{validationErrors.email}</span>}
+                    {validationErrors.email && (
+                      <span className="error-text">
+                        {validationErrors.email}
+                      </span>
+                    )}
                   </div>
 
                   <div className="form-group">
@@ -252,7 +278,11 @@ export default function ProfilePage() {
                       className={validationErrors.password ? 'error-input' : ''}
                       placeholder="••••••••"
                     />
-                    {validationErrors.password && <span className="error-text">{validationErrors.password}</span>}
+                    {validationErrors.password && (
+                      <span className="error-text">
+                        {validationErrors.password}
+                      </span>
+                    )}
                   </div>
 
                   <div className="form-group">
@@ -261,10 +291,16 @@ export default function ProfilePage() {
                       type="password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className={validationErrors.confirmPassword ? 'error-input' : ''}
+                      className={
+                        validationErrors.confirmPassword ? 'error-input' : ''
+                      }
                       placeholder="••••••••"
                     />
-                    {validationErrors.confirmPassword && <span className="error-text">{validationErrors.confirmPassword}</span>}
+                    {validationErrors.confirmPassword && (
+                      <span className="error-text">
+                        {validationErrors.confirmPassword}
+                      </span>
+                    )}
                   </div>
                 </div>
 

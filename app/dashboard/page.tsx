@@ -1,28 +1,104 @@
 'use client'
 
+import React, { useState, useEffect } from 'react'
 import Sidebar from '../../components/sidebar'
 import { Bell, ChevronRight, Search } from '../../components/Icons'
 import Link from 'next/link'
+import { getCookie } from '@/lib/cookie'
 
-const transactions = [
-  {
-    date: 'Oct, 16 2025',
-    account: '......3423',
-    amount: '-Rs. 4500.00'
-  },
-  {
-    date: 'Oct, 16 2025',
-    account: '......4876',
-    amount: '-Rs. 10,000.00'
-  },
-  {
-    date: 'Oct, 16 2025',
-    account: '......6754',
-    amount: '-Rs. 9870.00'
-  }
-]
+interface Transaction {
+  id: number
+  from_account: string
+  to_account: string
+  amount: string
+  description: string
+  status: string
+  created_at: string
+}
+
+interface Account {
+  id: number
+  account_number: string
+  balance: string
+  account_name: string
+}
 
 export default function Dashboard() {
+  const [user, setUser] = useState<{ full_name: string } | null>(null)
+  const [accounts, setAccounts] = useState<Account[]>([])
+  const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const userId = getCookie('user_id') || '1'
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true)
+
+        // 1. Fetch Profile
+        const profileRes = await fetch(`/api/profile?userId=${userId}`)
+        let fullName = 'Customer'
+        if (profileRes.ok) {
+          const profileData = await profileRes.json()
+          setUser(profileData.user)
+          fullName = profileData.user?.full_name || 'Customer'
+        }
+
+        // 2. Fetch Accounts
+        const accountsRes = await fetch(`/api/accounts?userId=${userId}`)
+        let userAccounts: Account[] = []
+        if (accountsRes.ok) {
+          const accountsData = await accountsRes.json()
+          userAccounts = accountsData.accounts || []
+          setAccounts(userAccounts)
+        }
+
+        // 3. Fetch Transactions for all user accounts
+        if (userAccounts.length > 0) {
+          const transactionPromises = userAccounts.map((acc) =>
+            fetch(`/api/transactions?account=${acc.account_number}`)
+              .then((res) => (res.ok ? res.json() : { transactions: [] }))
+              .catch(() => ({ transactions: [] }))
+          )
+
+          const results = await Promise.all(transactionPromises)
+          const allTxns: Transaction[] = []
+
+          // Combine all transactions
+          results.forEach((res) => {
+            if (res.transactions) {
+              allTxns.push(...res.transactions)
+            }
+          })
+
+          // Deduplicate transactions by ID
+          const uniqueTxnsMap = new Map<number, Transaction>()
+          allTxns.forEach((t) => uniqueTxnsMap.set(t.id, t))
+          const sortedTxns = Array.from(uniqueTxnsMap.values()).sort(
+            (a, b) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime()
+          )
+
+          setTransactions(sortedTxns.slice(0, 5)) // show top 5
+        }
+      } catch (err) {
+        console.error('Error loading dashboard data:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDashboardData()
+  }, [userId])
+
+  // Aggregate total balance across accounts
+  const totalBalance = accounts.reduce(
+    (sum, acc) => sum + parseFloat(acc.balance || '0'),
+    0
+  )
+
   return (
     <main className="dashboard">
       <Sidebar />
@@ -35,7 +111,11 @@ export default function Dashboard() {
             <Search size={24} />
             <Bell size={24} />
             <Link href="/profile" className="avatar-link">
-              <img src="/person-logo.png" alt="profile" className="avatar" />
+              <img
+                src="/avatar.png"
+                alt="profile"
+                className="avatar bg-white"
+              />
             </Link>
           </div>
         </header>
@@ -43,10 +123,17 @@ export default function Dashboard() {
         {/* Top Section */}
         <div className="top-section">
           <div className="welcome-card">
-            <h2 className="welcome-title">Welcome back, Dilara!</h2>
+            <h2 className="welcome-title">
+              Welcome back, {user ? user.full_name.split(' ')[0] : 'User'}!
+            </h2>
             <div className="balance-card">
               <p className="balance-label">Current Balance</p>
-              <p className="balance-amount">Rs. 100, 000</p>
+              <p className="balance-amount">
+                Rs.{' '}
+                {totalBalance.toLocaleString('en-US', {
+                  minimumFractionDigits: 2
+                })}
+              </p>
               <ChevronRight className="balance-chevron" size={30} />
             </div>
             <div className="carousel-dots">
@@ -62,22 +149,37 @@ export default function Dashboard() {
           </div>
 
           <div className="payees-card">
-            <h3 className="payees-title">Saved Payees</h3>
-            <div className="payees-list">
-              {[1, 2].map((item) => (
-                <div key={item} className="payee-item">
-                  <img src="/person-logo.png" alt="user" className="avatar" />
+            <h3 className="payees-title">Connected Accounts</h3>
+            <div
+              className="payees-list"
+              style={{ maxHeight: '140px', overflowY: 'auto' }}
+            >
+              {accounts.map((acc) => (
+                <div key={acc.id} className="payee-item">
+                  <img src="/account-logo.png" alt="user" className="avatar" />
                   <div className="payee-info">
-                    <p>HKDS</p>
-                    <p>Wickramanayake</p>
+                    <p className="font-semibold text-black">
+                      {acc.account_name}
+                    </p>
+                    <p className="text-gray-500 text-xs">
+                      No. {acc.account_number}
+                    </p>
                   </div>
                 </div>
               ))}
+              {accounts.length === 0 && (
+                <p className="text-gray-400 text-sm text-center py-4">
+                  No accounts connected.
+                </p>
+              )}
             </div>
-            <div className="view-all">
-              View all
+            <Link
+              href="/bank-accounts"
+              className="view-all text-purple-700 font-semibold no-underline"
+            >
+              Manage accounts
               <ChevronRight size={15} />
-            </div>
+            </Link>
           </div>
         </div>
 
@@ -85,19 +187,71 @@ export default function Dashboard() {
         <div className="transactions-section">
           <h2 className="transactions-title">Recent Transactions</h2>
           <div className="transactions-card">
-            {transactions.map((t, index) => (
-              <div key={index} className="transaction-item">
-                <img src="/person-logo.png" alt="user" className="avatar" />
-                <span className="transaction-date">{t.date}</span>
-                <span className="transaction-account">{t.account}</span>
-                <span className="transaction-amount">{t.amount}</span>
-                <span className="transaction-status">Success</span>
-              </div>
-            ))}
-            <div className="view-all">
+            {loading ? (
+              <p className="text-gray-500 p-4">Loading transactions...</p>
+            ) : transactions.length > 0 ? (
+              transactions.map((t, index) => {
+                // Check if from user's account to format as positive/negative
+                const userOwnedAccounts = accounts.map((a) => a.account_number)
+                const isDebit = userOwnedAccounts.includes(t.from_account)
+                const displayAmount = isDebit
+                  ? `-Rs. ${parseFloat(t.amount).toFixed(2)}`
+                  : `+Rs. ${parseFloat(t.amount).toFixed(2)}`
+                const displayDate = new Date(t.created_at).toLocaleDateString(
+                  'en-US',
+                  {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                  }
+                )
+
+                return (
+                  <div key={t.id || index} className="transaction-item">
+                    <img
+                      src="/account-logo.png"
+                      alt="user"
+                      className="avatar"
+                    />
+                    <span
+                      className="transaction-date"
+                      style={{ color: '#000' }}
+                    >
+                      {displayDate}
+                    </span>
+                    <span
+                      className="transaction-account"
+                      style={{ color: '#000' }}
+                    >
+                      {isDebit
+                        ? `To: ${t.to_account}`
+                        : `From: ${t.from_account}`}
+                    </span>
+                    <span
+                      className="transaction-amount"
+                      style={{
+                        color: isDebit ? '#ef4444' : '#10b981',
+                        fontWeight: '700'
+                      }}
+                    >
+                      {displayAmount}
+                    </span>
+                    <span className="transaction-status">Success</span>
+                  </div>
+                )
+              })
+            ) : (
+              <p className="text-gray-400 text-sm p-4 text-center">
+                No recent transactions found.
+              </p>
+            )}
+            <Link
+              href="/e-statement"
+              className="view-all text-purple-700 font-semibold no-underline"
+            >
               View all
               <ChevronRight size={15} />
-            </div>
+            </Link>
           </div>
         </div>
       </section>
@@ -241,6 +395,9 @@ export default function Dashboard() {
           color: black;
           flex: 1;
           min-width: 200px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
         }
 
         .payees-title {
@@ -250,10 +407,10 @@ export default function Dashboard() {
         }
 
         .payees-list {
-          margin-top: 1.5rem;
+          margin-top: 0.5rem;
           display: flex;
           flex-direction: column;
-          gap: 1.25rem;
+          gap: 0.75rem;
         }
 
         .payee-item {
@@ -266,22 +423,16 @@ export default function Dashboard() {
           font-size: 13px;
           line-height: 1.3;
         }
-        .payee-info p:first-child {
-          font-weight: 500;
-        }
-        .payee-info p:last-child {
-          color: #4b5563;
-        }
 
         .view-all {
           text-align: right;
-          margin-top: 1rem;
+          margin-top: 0.5rem;
           font-size: 13px;
           display: flex;
           justify-content: flex-end;
           align-items: center;
           gap: 0.25rem;
-          cursor: default;
+          cursor: pointer;
         }
 
         .transactions-section {
@@ -301,9 +452,9 @@ export default function Dashboard() {
           box-shadow: 18px 18px 12px rgba(0, 0, 0, 0.15);
           padding: 1.25rem;
           width: 1000px;
-          height: 200px;
+          height: 240px;
           max-width: 100%;
-          overflow-x: auto;
+          overflow-y: auto;
         }
 
         .transaction-item {
@@ -313,6 +464,12 @@ export default function Dashboard() {
           margin-bottom: 1rem;
           gap: 0.75rem;
           flex-wrap: wrap;
+          border-bottom: 1px solid #f3f4f6;
+          padding-bottom: 0.5rem;
+        }
+
+        .transaction-item:last-child {
+          border-bottom: none;
         }
 
         .transaction-date,

@@ -28,3 +28,78 @@ export async function GET(request: Request) {
     return serviceFailure(reason)
   }
 }
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json().catch(() => ({}))
+    const userId = asText(body.userId || '1')
+    const accountNumber = asText(body.accountNumber)
+    const accountName = asText(body.accountName || 'Savings Account').replace(
+      /'/g,
+      "''"
+    )
+    const balance = asText(body.balance || '50000.00')
+
+    const sql = `
+      INSERT INTO accounts (user_id, account_number, account_name, balance)
+      VALUES (${userId}, '${accountNumber}', '${accountName}', ${balance})
+      RETURNING *
+    `
+    const result = await runStatement(sql)
+
+    return Response.json({
+      ok: true,
+      message: 'Account connected.',
+      account: result.rows[0]
+    })
+  } catch (reason) {
+    return serviceFailure(reason)
+  }
+}
+
+export async function PUT(request: Request) {
+  try {
+    const body = await request.json().catch(() => ({}))
+    const accountNumber = asText(body.accountNumber)
+    const nickname = asText(body.nickname || body.accountName).replace(
+      /'/g,
+      "''"
+    )
+
+    const sql = `
+      UPDATE accounts
+      SET account_name = '${nickname}'
+      WHERE account_number = '${accountNumber}'
+      RETURNING *
+    `
+    const result = await runStatement(sql)
+
+    return Response.json({
+      ok: true,
+      message: 'Account name updated.',
+      account: result.rows[0]
+    })
+  } catch (reason) {
+    return serviceFailure(reason)
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const accountNumber = asText(searchParams.get('accountNumber'))
+
+    const sql = `
+      DELETE FROM accounts
+      WHERE account_number = '${accountNumber}'
+    `
+    await runStatement(sql)
+
+    return Response.json({
+      ok: true,
+      message: 'Account disconnected successfully.'
+    })
+  } catch (reason) {
+    return serviceFailure(reason)
+  }
+}

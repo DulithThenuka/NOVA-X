@@ -1,11 +1,10 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styles from './spend.module.css'
 import Link from 'next/link'
-
-// @ts-ignore
 import Sidebar from '@/components/sidebar'
+import { getCookie } from '@/lib/cookie'
 
 interface Expense {
   id: number
@@ -15,34 +14,21 @@ interface Expense {
   date: string
 }
 
-export default function SmartSpendPage() {
-  const [expenses, setExpenses] = useState<Expense[]>([
-    {
-      id: 1,
-      title: 'Server Hosting',
-      amount: 4500,
-      category: 'Tech',
-      date: '2026-06-18'
-    },
-    {
-      id: 2,
-      title: 'Team Lunch',
-      amount: 3800,
-      category: 'Food',
-      date: '2026-06-19'
-    },
-    {
-      id: 3,
-      title: 'Internet Bill',
-      amount: 2500,
-      category: 'Utilities',
-      date: '2026-06-19'
-    }
-  ])
+interface Account {
+  id: number
+  account_number: string
+  account_name: string
+  balance: string
+}
 
+export default function SmartSpendPage() {
+  const [expenses, setExpenses] = useState<Expense[]>([])
+  const [accounts, setAccounts] = useState<Account[]>([])
+  const [selectedAccount, setSelectedAccount] = useState('')
   const [title, setTitle] = useState('')
   const [amount, setAmount] = useState('')
   const [category, setCategory] = useState('Food')
+  const [loading, setLoading] = useState(true)
 
   // Optimization states
   const [isOptimizing, setIsOptimizing] = useState(false)
@@ -50,23 +36,96 @@ export default function SmartSpendPage() {
   const [activeOptimizations, setActiveOptimizations] = useState<any[]>([])
   const [appliedOptimizations, setAppliedOptimizations] = useState<number[]>([])
 
+  const userId = getCookie('user_id') || '1'
+
+  // Load user accounts and prefill selected account
+  useEffect(() => {
+    const loadAccounts = async () => {
+      try {
+        const res = await fetch(`/api/accounts?userId=${userId}`)
+        if (res.ok) {
+          const data = await res.json()
+          const userAccounts = data.accounts || []
+          setAccounts(userAccounts)
+          if (userAccounts.length > 0) {
+            setSelectedAccount(userAccounts[0].account_number)
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load accounts for spend tracking:', err)
+      }
+    }
+    loadAccounts()
+  }, [userId])
+
+  // Fetch expenses (which are stored as transactions in the database)
+  const fetchExpensesFromDb = async () => {
+    if (!selectedAccount) return
+    try {
+      setLoading(true)
+      const res = await fetch(`/api/transactions?account=${selectedAccount}`)
+      if (res.ok) {
+        const data = await res.json()
+        const txns = data.transactions || []
+
+        // Map database transactions to expense items
+        const mappedExpenses = txns.map((t: any) => ({
+          id: t.id,
+          title: t.description || 'General Expense',
+          amount: parseFloat(t.amount),
+          category: ['Food', 'Tech', 'Utilities'].includes(t.to_account)
+            ? t.to_account
+            : 'Other',
+          date: new Date(t.created_at).toISOString().split('T')[0]
+        }))
+
+        setExpenses(mappedExpenses)
+      }
+    } catch (err) {
+      console.error('Failed to load expenses from transactions database:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Load expenses when account is selected or changed
+  useEffect(() => {
+    if (selectedAccount) {
+      fetchExpensesFromDb()
+    }
+  }, [selectedAccount])
+
   const totalSpend = expenses.reduce((sum, item) => sum + item.amount, 0)
 
-  const handleAddExpense = (e: React.FormEvent) => {
+  const handleAddExpense = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!title || !amount) return
+    if (!title.trim() || !amount.trim() || !selectedAccount) return
 
-    const newExpense: Expense = {
-      id: Date.now(),
-      title,
-      amount: parseFloat(amount),
-      category,
-      date: new Date().toISOString().split('T')[0]
+    try {
+      const res = await fetch('/api/transfer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fromAccount: selectedAccount,
+          toAccount: category, // Category acts as destination account
+          amount,
+          description: title,
+          userId
+        })
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        alert(data.message || 'Failed to record expense. Check balance.')
+        return
+      }
+
+      setTitle('')
+      setAmount('')
+      await fetchExpensesFromDb()
+    } catch (err) {
+      alert('Network error recording expense.')
     }
-
-    setExpenses([newExpense, ...expenses])
-    setTitle('')
-    setAmount('')
   }
 
   const handleOptimize = () => {
@@ -91,7 +150,7 @@ export default function SmartSpendPage() {
         } else if (exp.category === 'Food') {
           title = 'Vendor Discount Promo'
           desc = `Apply corporate meal coupons to "${exp.title}"`
-          savings = Math.round(exp.amount * 0.10) // 10% for Food
+          savings = Math.round(exp.amount * 0.1) // 10% for Food
         } else if (exp.category === 'Utilities') {
           title = 'Utility Plan Migration'
           desc = `Switch "${exp.title}" to standard business package`
@@ -159,8 +218,24 @@ export default function SmartSpendPage() {
                 'Track & Optimize'
               )}
             </button>
-            <Link href="/profile" style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', display: 'block', border: '2px solid white', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
-              <img src="/person-logo.png" alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <Link
+              href="/profile"
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                overflow: 'hidden',
+                display: 'block',
+                border: '2px solid white',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+              }}
+            >
+              <img
+                src="/avatar.png"
+                alt="Profile"
+                className="bg-white"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
             </Link>
           </div>
         </div>
@@ -181,6 +256,28 @@ export default function SmartSpendPage() {
             <div className={styles.formCard}>
               <h2 className={styles.formTitle}>Record New Expense</h2>
               <form onSubmit={handleAddExpense} className={styles.formElement}>
+                {/* Account Selection */}
+                <div className={styles.formGroup}>
+                  <label htmlFor="account-select">Select Bank Account</label>
+                  <select
+                    id="account-select"
+                    value={selectedAccount}
+                    onChange={(e) => setSelectedAccount(e.target.value)}
+                    className={styles.inputField}
+                    required
+                  >
+                    <option value="">Choose account</option>
+                    {accounts.map((acc) => (
+                      <option key={acc.id} value={acc.account_number}>
+                        {acc.account_name} ({acc.account_number}) - Rs.{' '}
+                        {parseFloat(acc.balance).toLocaleString('en-US', {
+                          minimumFractionDigits: 2
+                        })}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <div className={styles.formGroup}>
                   <label htmlFor="expense-title">Expense Title</label>
                   <input
@@ -190,6 +287,7 @@ export default function SmartSpendPage() {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     className={styles.inputField}
+                    required
                   />
                 </div>
 
@@ -202,6 +300,7 @@ export default function SmartSpendPage() {
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     className={styles.inputField}
+                    required
                   />
                 </div>
 
@@ -233,18 +332,33 @@ export default function SmartSpendPage() {
             <h2 className={styles.formTitle}>Recent Transactions</h2>
 
             <div className={styles.historyList}>
-              {expenses.map((item) => (
-                <div key={item.id} className={styles.transactionItem}>
-                  <div>
-                    <p className={styles.txTitle}>{item.title}</p>
-                    <span className={styles.txCategory}>{item.category}</span>
+              {loading ? (
+                <p className="text-gray-500 py-4 text-center">
+                  Loading expenses...
+                </p>
+              ) : expenses.length > 0 ? (
+                expenses.map((item) => (
+                  <div key={item.id} className={styles.transactionItem}>
+                    <div>
+                      <p className={styles.txTitle}>{item.title}</p>
+                      <span className={styles.txCategory}>{item.category}</span>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <p className={styles.txAmount}>
+                        - Rs.{' '}
+                        {item.amount.toLocaleString('en-US', {
+                          minimumFractionDigits: 2
+                        })}
+                      </p>
+                      <p className={styles.txDate}>{item.date}</p>
+                    </div>
                   </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <p className={styles.txAmount}>- Rs. {item.amount}</p>
-                    <p className={styles.txDate}>{item.date}</p>
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-gray-400 py-4 text-center">
+                  No recorded expenses for this account.
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -267,9 +381,11 @@ export default function SmartSpendPage() {
                 <p>
                   Our AI analyzed your current transactions and identified{' '}
                   <strong>
-                    {activeOptimizations.filter(
-                      (opt) => !appliedOptimizations.includes(opt.id)
-                    ).length}
+                    {
+                      activeOptimizations.filter(
+                        (opt) => !appliedOptimizations.includes(opt.id)
+                      ).length
+                    }
                   </strong>{' '}
                   new ways to optimize your cash flow.
                 </p>
@@ -281,7 +397,9 @@ export default function SmartSpendPage() {
                   return (
                     <div key={opt.id} className={styles.optimizationCard}>
                       <div className={styles.optimizationInfo}>
-                        <h4 className={styles.optimizationTitle}>{opt.title}</h4>
+                        <h4 className={styles.optimizationTitle}>
+                          {opt.title}
+                        </h4>
                         <p className={styles.optimizationDesc}>{opt.desc}</p>
                         <span className={styles.savingsAmount}>
                           Save Rs. {opt.savings.toLocaleString()}
@@ -289,9 +407,7 @@ export default function SmartSpendPage() {
                       </div>
                       <div>
                         {isApplied ? (
-                          <span className={styles.appliedBadge}>
-                            ✓ Applied
-                          </span>
+                          <span className={styles.appliedBadge}>✓ Applied</span>
                         ) : (
                           <button
                             className={styles.applyBtn}

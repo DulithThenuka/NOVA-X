@@ -5,7 +5,45 @@ import Link from 'next/link'
 // @ts-ignore
 import AuthButton from '@/components/authButton'
 
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+
 export default function LoginPage() {
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const router = useRouter()
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!username.trim() || !password.trim()) {
+      setError('Please enter both account name and password')
+      return
+    }
+
+    setLoading(false)
+    setError('')
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      })
+
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.message || 'Invalid credentials')
+        return
+      }
+
+      // Successfully logged in! Cookie set by response headers.
+      router.push('/Home')
+    } catch (err) {
+      setError('Something went wrong. Please try again.')
+    }
+  }
+
   return (
     <section className="mx-auto flex min-h-[480px] w-full max-w-[1060px] overflow-hidden rounded-[56px] bg-white shadow-[0_1px_3px_0_rgba(0,0,0,0.30),0_4px_8px_3px_rgba(0,0,0,0.15)] lg:min-h-[660px]">
       <aside
@@ -29,10 +67,19 @@ export default function LoginPage() {
       </aside>
 
       <div className="flex flex-1 items-center justify-center bg-white px-8 py-10">
-        <div className="w-full max-w-[450px] text-center">
+        <form
+          onSubmit={handleLogin}
+          className="w-full max-w-[450px] text-center"
+        >
           <h1 className="mb-11 text-[2.45rem] font-bold text-black text-balance">
             LOGIN
           </h1>
+
+          {error && (
+            <div className="mb-6 rounded-2xl bg-red-50 p-4 text-sm font-semibold text-red-600">
+              {error}
+            </div>
+          )}
 
           <div className="space-y-5">
             <div className="relative">
@@ -47,6 +94,8 @@ export default function LoginPage() {
               />
               <input
                 id="login-account"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 placeholder="Account name"
                 className="h-[64px] w-full rounded-[40px] border-0 bg-[#d9d9d9] px-8 pl-20 text-lg text-black shadow-[0_1px_3px_0_rgba(0,0,0,0.30),0_4px_8px_3px_rgba(0,0,0,0.15)] outline-none transition-shadow placeholder:text-black/45 focus:shadow-[0_4px_4px_0_rgba(0,0,0,0.30),0_8px_12px_6px_rgba(0,0,0,0.15)]"
               />
@@ -65,6 +114,8 @@ export default function LoginPage() {
               <input
                 id="login-password"
                 type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
                 className="h-[64px] w-full rounded-[40px] border-0 bg-[#d9d9d9] px-8 pl-20 text-lg text-black shadow-[0_1px_3px_0_rgba(0,0,0,0.30),0_4px_8px_3px_rgba(0,0,0,0.15)] outline-none transition-shadow placeholder:text-black/45 focus:shadow-[0_4px_4px_0_rgba(0,0,0,0.30),0_8px_12px_6px_rgba(0,0,0,0.15)]"
               />
@@ -80,10 +131,9 @@ export default function LoginPage() {
             </Link>
           </div>
 
-          {/* SIGN IN බටන් එකෙන් කෙලින්ම Capital 'H' සහිත /Home පිටුවට ලින්ක් කළා */}
-          <Link href="/Home" className="block w-full">
+          <button type="submit" className="block w-full">
             <AuthButton className="mt-8 w-full">SIGN IN</AuthButton>
-          </Link>
+          </button>
 
           <p className="mt-6 text-sm font-bold text-black">
             Don't have an account?
@@ -91,7 +141,7 @@ export default function LoginPage() {
           <Link href="/sign-up" className="text-2xl font-bold text-black">
             SIGN UP
           </Link>
-        </div>
+        </form>
       </div>
     </section>
   )
