@@ -1,0 +1,192 @@
+/* app/smart-spend/spend.module.css */
+
+.spendPage {
+  padding: 2rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #f1f1f1;
+  min-height: 100vh;
+  color: #333;
+  width: 100%; /* Layout එක ඇදල යෑම වැළැක්වීමට */
+  box-sizing: border-box;
+}
+
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.pageTitle {
+  font-size: 28px;
+  font-weight: 700;
+  color: #000;
+  margin: 0;
+}
+
+.badge {
+  background: #450043;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  width: 100%;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.totalBox {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 18px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  border-left: 6px solid #450043;
+}
+
+.totalTitle {
+  margin: 0 0 0.5rem 0;
+  color: #666;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.totalAmount {
+  margin: 0;
+  font-size: 36px;
+  font-weight: 700;
+  color: #000;
+}
+
+.formCard {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 18px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.formTitle {
+  margin: 0 0 1.5rem 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #000;
+}
+
+.formElement {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formGroup label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+.inputField {
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 14px;
+  outline: none;
+  background-color: #ffffff !important;
+  color: #000 !important;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.inputField:focus {
+  border-color: #450043;
+}
+
+.submitBtn {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: #450043 !important;
+  color: #fff !important;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.submitBtn:hover {
+  background: #5a0058 !important;
+}
+
+.rightColumn {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 18px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+}
+
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.transactionItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border: 1.5px solid #f0f0f0;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.txTitle {
+  margin: 0 0 0.25rem 0;
+  font-weight: 600;
+  color: #000;
+}
+
+.txCategory {
+  font-size: 12px;
+  color: #666;
+  background: #f3f4f6;
+  padding: 0.2rem 0.6rem;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+.txAmount {
+  margin: 0 0 0.25rem 0;
+  font-weight: 700;
+  color: #ef4444;
+}
+
+.txDate {
+  margin: 0;
+  font-size: 11px;
+  color: #9ca3af;
+}
