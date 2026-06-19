@@ -2,6 +2,7 @@
 
 import Sidebar from '../../components/sidebar'
 import { Bell, ChevronRight, Search } from '../../components/Icons'
+import Link from 'next/link'
 
 const transactions = [
   {
@@ -33,7 +34,9 @@ export default function Dashboard() {
           <div className="header-actions">
             <Search size={24} />
             <Bell size={24} />
-            <img src="/person-logo.png" alt="profile" className="avatar" />
+            <Link href="/profile" className="avatar-link">
+              <img src="/person-logo.png" alt="profile" className="avatar" />
+            </Link>
           </div>
         </header>
 

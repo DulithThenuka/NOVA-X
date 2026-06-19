@@ -1,4 +1,5 @@
 import Sidebar from '@/components/sidebar'
+import Link from 'next/link'
 
 export default function EStatementPage() {
   return (
@@ -16,13 +17,13 @@ export default function EStatementPage() {
               <button className="topbar-icon" aria-label="notifications">
                 <img src="/notification.png" alt="notifications" />
               </button>
-              <div className="size-12 overflow-hidden rounded-full border-2 border-gray-200">
+              <Link href="/profile" className="size-12 overflow-hidden rounded-full border-2 border-gray-200 block">
                 <img
                   src="/avatar.png"
                   alt="avatar"
                   className="size-full bg-white object-cover"
                 />
-              </div>
+              </Link>
             </div>
           </div>
 

@@ -1,15 +1,16 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
+import Link from 'next/link'
 import Sidebar from '@/components/sidebar'
 import { Search, Bell } from '@/components/Icons'
 import styles from './accounts.module.css'
 
 type Screen = 'list' | 'add' | 'edit'
 
-export default function AccountsPage() {
+function AccountsPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -254,7 +255,7 @@ export default function AccountsPage() {
               <div className={styles.headerActions}>
                 <Search size={22} />
                 <Bell size={22} />
-                <div className={styles.avatarPlaceholder}>
+                <Link href="/profile" className={styles.avatarPlaceholder}>
                   <Image
                     src="/person-logo.png"
                     alt="Profile"
@@ -262,7 +263,7 @@ export default function AccountsPage() {
                     height={40}
                     style={{ objectFit: 'cover', borderRadius: '50%' }}
                   />
-                </div>
+                </Link>
               </div>
             </header>
 
@@ -306,7 +307,7 @@ export default function AccountsPage() {
               <div className={styles.headerActions}>
                 <Search size={22} />
                 <Bell size={22} />
-                <div className={styles.avatarPlaceholder}>
+                <Link href="/profile" className={styles.avatarPlaceholder}>
                   <Image
                     src="/person-logo.png"
                     alt="Profile"
@@ -314,7 +315,7 @@ export default function AccountsPage() {
                     height={40}
                     style={{ objectFit: 'cover', borderRadius: '50%' }}
                   />
-                </div>
+                </Link>
               </div>
             </header>
 
@@ -440,7 +441,7 @@ export default function AccountsPage() {
               <div className={styles.headerActions}>
                 <Search size={22} />
                 <Bell size={22} />
-                <div className={styles.avatarPlaceholder}>
+                <Link href="/profile" className={styles.avatarPlaceholder}>
                   <Image
                     src="/person-logo.png"
                     alt="Profile"
@@ -448,7 +449,7 @@ export default function AccountsPage() {
                     height={40}
                     style={{ objectFit: 'cover', borderRadius: '50%' }}
                   />
-                </div>
+                </Link>
               </div>
             </header>
 
@@ -504,5 +505,17 @@ export default function AccountsPage() {
         )}
       </section>
     </main>
+  )
+}
+
+export default function AccountsPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center', background: '#f1f1f1' }}>
+        <div style={{ color: '#4b5563', fontFamily: 'sans-serif' }}>Loading page data...</div>
+      </div>
+    }>
+      <AccountsPageContent />
+    </Suspense>
   )
 }
