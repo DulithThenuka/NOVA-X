@@ -1,0 +1,76 @@
+/* app/home/home.module.css */
+
+.homeContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #eef2f3;
+  font-family: system-ui, sans-serif;
+  padding: 2rem;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #1d0730;
+  margin-bottom: 0.5rem;
+  margin-top: 15vh;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 2.5rem;
+  font-size: 1.1rem;
+}
+
+.buttonGrid {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 800px;
+  margin-bottom: 1.5rem;
+}
+
+.btn {
+  padding: 1rem 2.5rem;
+  color: white !important;
+  text-decoration: none;
+  border-radius: 15px;
+  font-weight: bold;
+  font-size: 1rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btnAccounts { background: #0061ff; }
+.btnTransfer { background: #00b050; }
+.btnBills { background: #9200ef; }
+.btnStatement { background: #ff5500; }
+
+.centerRow {
+  display: flex;
+  justify-content: center;
+}
+
+.btnSmartSpend {
+  padding: 1rem 3rem;
+  background: #e50000;
+  color: white !important;
+  text-decoration: none;
+  border-radius: 15px;
+  font-weight: bold;
+  font-size: 1rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.btnSmartSpend:hover {
+  transform: translateY(-2px);
+}
